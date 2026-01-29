@@ -125,7 +125,7 @@ input {
     font-weight: 500; outline: none; 
 }
 input::placeholder { 
-    color: #928c8c; /* Placeholder สีดำ */
+    color: #999999; 
     opacity: 1; 
 }
 
