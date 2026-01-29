@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Orbit</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div id="app" class="app-container">
+        <div id="toast-container"></div>
+
+        <canvas id="confetti-canvas"></canvas>
+
+        <div id="loading-screen" class="screen active" style="z-index: 999;">
+            <div class="logo-wrapper">
+                <div class="logo-pulse">Orbit</div>
+                <div class="badge-ultimate">pro</div>
+                <p>Connecting Souls, Not Just Profiles.</p>
+            </div>
+        </div>
+
+        <div id="auth-screen" class="screen hidden" style="z-index: 800;">
+            <div class="auth-box">
+                <div class="auth-header">
+                    <h1 class="brand-title">Orbit</h1>
+                    <p class="brand-subtitle">ค้นหาคนที่ใช่ ในแบบที่เป็นคุณ</p>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchAuthTab('login')">เข้าสู่ระบบ</button>
+                    <button class="tab-btn" onclick="switchAuthTab('register')">สมัครสมาชิก</button>
+                </div>
+
+                <form id="login-form">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="login-input" placeholder="ชื่อผู้ใช้ หรือ อีเมล" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="login-password" placeholder="รหัสผ่าน" required>
+                    </div>
+                    <button type="submit" class="btn-primary">เข้าสู่ระบบ</button>
+                </form>
+
+                <form id="register-form" class="hidden">
+                    <div class="upload-section">
+                        <div class="upload-wrapper" onclick="document.getElementById('reg-file').click()">
+                            <img id="reg-preview" class="hidden" src="" alt="Preview"> 
+                            <div class="placeholder-icon">
+                                <i class="fas fa-camera"></i>
+                                <span>เพิ่มรูป</span>
+                            </div>
+                            <input type="file" id="reg-file" accept="image/*" hidden>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <input type="text" id="reg-username" placeholder="ชื่อผู้ใช้" required>
+                        <input type="email" id="reg-email" placeholder="อีเมล" required>
+                    </div>
+                    <input type="password" id="reg-password" placeholder="รหัสผ่าน" required>
+                    
+                    <div class="divider">ข้อมูลส่วนตัว</div>
+                    
+                    <input type="text" id="reg-fullname" placeholder="ชื่อแสดง (Display Name)" required>
+                    <div class="row-2">
+                        <input type="number" id="reg-age" placeholder="อายุ" required>
+                        <select id="reg-gender" required>
+                            <option value="" disabled selected>เพศ</option>
+                            <option value="male">ชาย</option>
+                            <option value="female">หญิง</option>
+                            <option value="other">LGBTQ+</option>
+                        </select>
+                    </div>
+                    <label class="label-muted">ฉันสนใจ:</label>
+                    <select id="reg-interest" required>
+                        <option value="female">ผู้หญิง</option>
+                        <option value="male">ผู้ชาย</option>
+                        <option value="all">ทุกเพศ</option>
+                    </select>
+                    <textarea id="reg-bio" placeholder="แนะนำตัวสั้นๆ..."></textarea>
+                    <label class="label-muted" style="margin-top:15px;">ไลฟ์สไตล์ (เลือกได้หลายข้อ):</label>
+                    <div id="reg-tags-container" class="tags-container" style="margin-bottom: 20px;">
+                        <span class="tag-option" onclick="toggleTag(this)">🎵 Music</span>
+                        <span class="tag-option" onclick="toggleTag(this)">✈️ Travel</span>
+                        <span class="tag-option" onclick="toggleTag(this)">🎮 Gamer</span>
+                        <span class="tag-option" onclick="toggleTag(this)">☕ Coffee</span>
+                        <span class="tag-option" onclick="toggleTag(this)">💪 Gym</span>
+                        <span class="tag-option" onclick="toggleTag(this)">🎨 Art</span>
+                        <span class="tag-option" onclick="toggleTag(this)">🐶 Pets</span>
+                        <span class="tag-option" onclick="toggleTag(this)">🍕 Foodie</span>
+                        <span class="tag-option" onclick="toggleTag(this)">📚 Reader</span>
+                        <span class="tag-option" onclick="toggleTag(this)">💃 Dance</span>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">สมัครสมาชิก</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="main-interface" class="screen hidden" style="z-index: 100;">
+            <header class="app-header">
+                <div class="user-mini" onclick="navigateTo('profile')">
+                    <img id="header-avatar" src="">
+                    <div id="vip-status-dot" class="vip-dot hidden"></div>
+                </div>
+                <div class="logo-text">Destiny</div>
+                <button class="settings-btn" onclick="openSettings()"><i class="fas fa-sliders-h"></i></button>
+            </header>
+
+            <main class="content-area">
+                
+                <div id="view-match" class="view-section active">
+                    <div id="stories-bar" class="stories-container">
+                    </div>
+
+                    <div id="card-stack" class="card-container"></div>
+                    
+                    <div class="controls">
+                        <button class="btn-circle small undo" onclick="undoSwipe()"><i class="fas fa-undo"></i></button>
+                        <button class="btn-circle pass" onclick="triggerSwipe('left')"><i class="fas fa-times"></i></button>
+                        <button class="btn-circle super-like" onclick="triggerSwipe('up')"><i class="fas fa-star"></i></button>
+                        <button class="btn-circle like" onclick="triggerSwipe('right')"><i class="fas fa-heart"></i></button>
+                    </div>
+                </div>
+
+                <div id="view-messages" class="view-section">
+                    <div class="section-title">New Matches <span id="match-count" class="badge-count">0</span></div>
+                    <div id="new-matches-list" class="match-row"></div>
+                    <div class="section-title">Messages</div>
+                    <div id="chat-list" class="message-list"></div>
+                </div>
+
+                <div id="view-likes" class="view-section">
+                    <div class="section-title">
+                        คนที่คุณถูกใจ <span id="likes-count" class="badge-count">0</span>
+                    </div>
+                    <div id="likes-list" class="likes-grid"></div>
+                </div>
+
+                <div id="view-profile" class="view-section">
+                    <div class="profile-header-bg"></div>
+                    <div class="profile-card">
+                        <div class="profile-img-big">
+                            <img id="profile-img-large" src="">
+                            <button class="edit-icon" onclick="openEditProfile()"><i class="fas fa-pen"></i></button>
+                        </div>
+                        <h2 id="profile-name-large">Name, 20 <i id="profile-verified-badge" class="fas fa-check-circle verified-badge hidden"></i></h2>
+                        <p id="profile-bio-large">Bio...</p>
+                        <div class="stats-row">
+                            <div class="stat-item"><span class="stat-num" id="stat-matches">0</span><span class="stat-label">Matches</span></div>
+                            <div class="stat-item"><span class="stat-num" id="stat-likes">0</span><span class="stat-label">Likes</span></div>
+                        </div>
+
+                        <div class="menu-list">
+                            <div class="menu-item" onclick="openEditProfile()">
+                                <div class="icon-box"><i class="fas fa-user-edit"></i></div>
+                                <span>แก้ไขโปรไฟล์</span>
+                                <i class="fas fa-chevron-right arrow"></i>
+                            </div>
+
+                            <div class="menu-item" onclick="buyVIP()">
+                                <div class="icon-box" style="background: #FFF9C4; color: #FBC02D;">
+                                    <i class="fas fa-crown"></i>
+                                </div>
+                                <span style="color: #F57F17; font-weight: 700;">สมัครสมาชิก VIP</span>
+                                <div id="vip-badge-menu" class="hidden" style="background:gold; color:black; font-size:10px; padding:2px 6px; border-radius:10px; margin-right:5px;">ACTIVE</div>
+                                <i class="fas fa-chevron-right arrow"></i>
+                            </div>
+                            
+                            <div class="menu-item" onclick="openWhoLikedMe()">
+                                <div class="icon-box" style="background: #ffe4e6; color: #ec4899;">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <span>ใครแอบชอบฉันบ้าง? <small style="color:#ec4899;">(VIP)</small></span>
+                                <i class="fas fa-chevron-right arrow"></i>
+                            </div>
+
+                            <div class="menu-item" onclick="openQuests()">
+                                <div class="icon-box" style="background: #e0f2fe; color: #0ea5e9;">
+                                    <i class="fas fa-tasks"></i>
+                                </div>
+                                <span>ภารกิจรายวัน (Daily Quests)</span>
+                                <div id="quest-badge" class="hidden" style="background:red; width:8px; height:8px; border-radius:50%; margin-right:5px;"></div>
+                                <i class="fas fa-chevron-right arrow"></i>
+                            </div>
+
+                            <div class="menu-item" onclick="openSettings()">
+                                <div class="icon-box"><i class="fas fa-cog"></i></div>
+                                <span>ตั้งค่าการค้นหา</span>
+                                <i class="fas fa-chevron-right arrow"></i>
+                            </div>
+
+                            <div class="menu-item logout" onclick="logout()">
+                                <div class="icon-box danger"><i class="fas fa-sign-out-alt"></i></div>
+                                <span class="text-danger">ออกจากระบบ</span>
+                            </div>
+                        </div>
+                        <br><br>
+                        <div style="text-align:center; color:#ccc; font-size:0.7rem;">Version Ultimate 2.3</div>
+                    </div>
+                </div>
+
+                <div id="chat-room" class="sub-screen hidden">
+                    <div class="chat-header">
+                        <button onclick="closeChat()"><i class="fas fa-chevron-left"></i></button>
+                        
+                        <div class="chat-mate" style="flex:1; margin-left:10px;"> 
+                            <img id="chat-mate-img" src="">
+                            <div style="display:flex; flex-direction:column; align-items:flex-start;">
+                                <span id="chat-mate-name" style="line-height:1;">Name</span>
+                                <span id="chat-mate-status" style="font-size:0.65rem; color:#10b981;">Online</span>
+                            </div>
+                        </div>
+
+                        <div class="header-actions" style="display:flex; gap:15px; margin-right:10px;">
+                            <button class="btn-header-call" onclick="startVoiceCall()">
+                                <i class="fas fa-phone-alt"></i>
+                            </button>
+                            <button class="btn-header-call" onclick="startVideoCall()">
+                                <i class="fas fa-video"></i>
+                            </button>
+                        </div>
+
+                        <button class="more-opt" onclick="toggleChatOptions()"><i class="fas fa-ellipsis-v"></i></button>
+                        
+                        <div id="chat-options-dropdown" class="chat-dropdown options-menu">
+                            <div class="dropdown-item" onclick="viewUserProfile()"><i class="fas fa-user"></i> ดูโปรไฟล์</div>
+                            <div class="dropdown-item" onclick="reportUser()"><i class="fas fa-flag"></i> รายงาน</div>
+                            <div class="dropdown-item danger" onclick="unmatchUser()"><i class="fas fa-user-slash"></i> เลิกแมตช์</div>
+                        </div>
+                    </div>
+
+                    <div id="chat-conversation" class="chat-body" onclick="closeAllMenus()"></div>
+
+                    <div id="sticker-picker" class="sticker-panel hidden">
+                        <div class="sticker-grid">
+                            <span onclick="sendSticker('😀')">😀</span> <span onclick="sendSticker('😂')">😂</span>
+                            <span onclick="sendSticker('🥰')">🥰</span> <span onclick="sendSticker('😎')">😎</span>
+                            <span onclick="sendSticker('😭')">😭</span> <span onclick="sendSticker('😡')">😡</span>
+                            <span onclick="sendSticker('👍')">👍</span> <span onclick="sendSticker('👎')">👎</span>
+                            <span onclick="sendSticker('❤️')">❤️</span> <span onclick="sendSticker('💔')">💔</span>
+                            <span onclick="sendSticker('🎉')">🎉</span> <span onclick="sendSticker('🔥')">🔥</span>
+                            <span onclick="sendSticker('✨')">✨</span> <span onclick="sendSticker('💩')">💩</span>
+                            <span onclick="sendSticker('👻')">👻</span> <span onclick="sendSticker('🌹')">🌹</span>
+                            <span onclick="sendSticker('💋')">💋</span> <span onclick="sendSticker('👋')">👋</span>
+                            <span onclick="sendSticker('🙏')">🙏</span> <span onclick="sendSticker('💪')">💪</span>
+                        </div>
+                    </div>
+
+                    <div class="chat-input-area">
+                        <div id="attach-dropdown" class="chat-dropdown attach-menu-up">
+                            <div class="dropdown-item" onclick="triggerPhotoUpload()">
+                                <i class="fas fa-image" style="color:#3b82f6;"></i> รูปภาพ
+                            </div>
+                            <div class="dropdown-item" onclick="toggleGiftMenu()">
+                                <i class="fas fa-gift" style="color:#ec4899;"></i> ของขวัญ
+                            </div>
+                            <div class="dropdown-item" onclick="sendRealLocation()">
+                                <i class="fas fa-map-marker-alt" style="color:#ef4444;"></i> ตำแหน่ง
+                            </div>
+                        </div>
+
+                        <div class="input-toolbar">
+                            <button class="btn-tool" onclick="toggleAttachMenu()">
+                                <i class="fas fa-plus-circle"></i>
+                            </button>
+                            
+                            <div class="input-wrapper">
+                                <input type="text" id="msg-input" placeholder="พิมพ์ข้อความ..." autocomplete="off" onkeypress="handleChatKey(event)">
+                                <button class="btn-icon-inside" onclick="toggleStickerPicker()"><i class="fas fa-smile"></i></button>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn-action-circle" id="btn-mic" onmousedown="startRecording()" onmouseup="stopRecording()" ontouchstart="startRecording()" ontouchend="stopRecording()">
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                                <button class="btn-action-circle send-mode hidden" id="btn-send-text" onclick="sendMessage()">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <input type="file" id="chat-photo-input" accept="image/*" hidden onchange="handlePhotoUpload(this)">
+                    </div>
+
+                    <div id="recording-overlay" class="hidden">
+                        <div class="recording-wave">
+                            <span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                        <p>กำลังบันทึกเสียง... ปล่อยเพื่อส่ง</p>
+                    </div>
+
+                </div>
+
+                <div id="view-user-modal" class="modal hidden">
+                    <div class="modal-content slide-up">
+                        <div class="modal-header">
+                            <h3>ข้อมูลโปรไฟล์</h3>
+                            <button class="close-btn" onclick="closeUserProfile()"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="modal-body" style="text-align: center;">
+                            <div style="position:relative; display:inline-block;">
+                                <img id="view-user-img" src="" class="profile-img-modal">
+                                <div class="compatibility-badge" id="view-user-score">95% Match</div>
+                            </div>
+                            
+                            <h2 id="view-user-name" style="margin-bottom:5px;">Name, 20</h2>
+                            <div id="view-user-tags" class="tags-container" style="justify-content:center; margin-bottom:15px;"></div>
+                            <p id="view-user-bio" style="color:#6b7280; line-height:1.5;">Bio...</p>
+                            
+                            <div style="margin-top:25px; display:flex; gap:10px;">
+                                <button class="btn-primary" style="background:#ef4444; flex:1;" onclick="unmatchUser()">เลิกแมตช์</button>
+                                <button class="btn-primary" style="background:#f3f4f6; color:#374151; flex:1;" onclick="closeUserProfile()">ปิด</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+           <nav class="bottom-nav hidden">
+              <button class="nav-btn active" onclick="navigateTo('match')">
+                  <i class="fas fa-fire"></i>
+              </button>
+              <button class="nav-btn" onclick="navigateTo('likes')">
+                  <i class="fas fa-star"></i>
+              </button>
+              <button class="nav-btn" onclick="navigateTo('messages')">
+                  <i class="fas fa-comment-alt"></i>
+                  <div id="nav-msg-badge" class="nav-badge hidden"></div>
+              </button>
+              <button class="nav-btn" onclick="navigateTo('profile')">
+                  <i class="fas fa-user"></i>
+              </button>
+             </nav>
+            </div>
+
+        <div id="edit-profile-modal" class="modal hidden">
+            <div class="modal-content slide-up">
+                <div class="modal-header">
+                    <h3>แก้ไขโปรไฟล์</h3>
+                    <button class="close-btn" onclick="closeEditProfile()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="upload-section">
+                        <div class="upload-wrapper" onclick="document.getElementById('edit-file').click()">
+                            <img id="edit-preview" class="hidden" src="" alt="Preview">
+                            <div class="placeholder-icon">
+                                <i class="fas fa-camera"></i>
+                                <span>เปลี่ยนรูป</span>
+                            </div>
+                            <input type="file" id="edit-file" accept="image/*" hidden>
+                        </div>
+                    </div>
+                    <label class="label-muted">ชื่อแสดง</label>
+                    <input type="text" id="edit-name">
+                    <label class="label-muted">เกี่ยวกับฉัน</label>
+                    <textarea id="edit-bio" rows="3"></textarea>
+                    <button class="btn-primary" onclick="saveProfileChanges()">บันทึก</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings-modal" class="modal hidden">
+            <div class="modal-content slide-up">
+                <div class="modal-header">
+                    <h3>ตั้งค่าการค้นหา</h3>
+                    <button class="close-btn" onclick="closeSettings()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <label class="label-muted">ฉันสนใจ:</label>
+                    <div class="select-wrapper">
+                        <select id="set-interest">
+                            <option value="male">ผู้ชาย</option>
+                            <option value="female">ผู้หญิง</option>
+                            <option value="all">ทุกคน</option>
+                        </select>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 20px 0;">
+                    <label class="label-muted">ช่วงอายุ: <span id="age-display" style="color:var(--primary); font-weight:600;">18 - 50</span> ปี</label>
+                    <div class="row-2">
+                        <input type="number" id="set-age-min" placeholder="ต่ำสุด" min="18" max="80" onchange="updateAgeDisplay()" style="text-align:center;">
+                        <input type="number" id="set-age-max" placeholder="สูงสุด" min="18" max="80" onchange="updateAgeDisplay()" style="text-align:center;">
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <label class="label-muted" style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                            ระยะทางสูงสุด:
+                            <span id="dist-display" style="color:var(--primary); font-weight:600;">20 km</span>
+                        </label>
+                        <input type="range" id="set-distance" min="1" max="100" value="20" style="width:100%; accent-color: var(--primary); height: 6px; cursor: pointer;" oninput="document.getElementById('dist-display').innerText = this.value + ' km'">
+                    </div>
+                    <button class="btn-primary" style="margin-top: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);" onclick="saveSettings()">บันทึกการค้นหา</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="match-modal" class="modal-overlay hidden">
+            <div class="match-popup bounce-in">
+                <div class="heart-icon-anim"><i class="fas fa-heart"></i></div>
+                <h1>It's a Match!</h1>
+                <p>คุณใจตรงกันกับ <span id="match-name"></span></p>
+                <div class="match-avatars">
+                    <img id="my-match-img" src="">
+                    <img id="their-match-img" src="">
+                </div>
+                <button class="btn-primary" onclick="startChatFromModal()">ส่งข้อความเลย</button>
+                <button class="btn-text" onclick="closeModal()">ค้นหาต่อ</button>
+            </div>
+        </div>
+
+        <div id="vip-limit-modal" class="modal-overlay hidden">
+            <div class="match-popup bounce-in">
+                <div class="heart-icon-anim" style="color: #FFD700;"><i class="fas fa-crown"></i></div>
+                <h1>โควต้าหมด!</h1>
+                <p>สมาชิกทั่วไปปัดได้ 5 คน/วัน<br>สมัคร VIP เพื่อปัดได้ไม่จำกัด</p>
+                <button class="btn-primary vip-gold" onclick="buyVIP()">สมัคร VIP (จำลอง)</button>
+                <button class="btn-text" onclick="closeVipModal()">ไว้ก่อน</button>
+            </div>
+        </div>
+
+        <div id="who-liked-me-modal" class="modal hidden">
+            <div class="modal-content slide-up" style="max-height: 80vh; display:flex; flex-direction:column;">
+                <div class="modal-header">
+                    <h3>ใครแอบชอบฉันบ้าง?</h3>
+                    <button class="close-btn" onclick="document.getElementById('who-liked-me-modal').classList.add('hidden')"><i class="fas fa-times"></i></button>
+                </div>
+                <div id="who-liked-list" style="overflow-y:auto; flex:1; padding-bottom:20px;">
+                    </div>
+            </div>
+        </div>
+
+        <div id="video-call-screen" class="screen hidden" style="z-index: 3000; background: #000;">
+            <div class="partner-video-container">
+                <img id="call-partner-img" src="" class="partner-img-call">
+                <div class="pulse-ring"></div>
+            </div>
+            
+            <video id="my-video-feed" autoplay muted playsinline class="my-video-feed"></video>
+
+            <div class="call-ui-overlay">
+                <div class="call-info">
+                    <h2 id="call-partner-name">Name</h2>
+                    <p id="call-status">กำลังเชื่อมต่อ...</p>
+                    <p id="call-timer" class="hidden">00:00</p>
+                </div>
+                
+                <div class="call-controls">
+                    <button class="btn-circle" style="background:rgba(255,255,255,0.2); color:white;"><i class="fas fa-microphone-slash"></i></button>
+                    <button class="btn-circle pass" style="width:70px; height:70px;" onclick="endCall()"><i class="fas fa-phone-slash"></i></button>
+                    <button class="btn-circle" style="background:rgba(255,255,255,0.2); color:white;"><i class="fas fa-video-slash"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="daily-login-modal" class="modal-overlay hidden" style="z-index: 4000;">
+            <div class="match-popup bounce-in" style="background: linear-gradient(135deg, #fffbeb 0%, #fff 100%);">
+                <div class="heart-icon-anim" style="color: #f59e0b;"><i class="fas fa-coins"></i></div>
+                <h1>Daily Bonus!</h1>
+                <p>กลับมาเจอกันอีกแล้วนะ<br>รับเหรียญฟรีประจำวัน</p>
+                <div style="font-size:2rem; font-weight:bold; color:#f59e0b; margin:10px 0;">+100 <i class="fas fa-coins"></i></div>
+                <button class="btn-primary" onclick="claimDailyBonus()">รับรางวัล</button>
+            </div>
+        </div>
+
+        <div id="gift-modal" class="modal-overlay hidden" style="z-index: 2500;">
+            <div class="modal-content slide-up" style="background: linear-gradient(to top, #fff, #fff0f5);">
+                <div class="modal-header">
+                    <h3>ส่งของขวัญ <span class="coin-balance-badge"><i class="fas fa-coins"></i> <span id="user-coins-display">0</span></span></h3>
+                    <button class="close-btn" onclick="toggleGiftMenu()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="gift-grid">
+                    <div class="gift-item" onclick="sendGift('🌹', 10, 'ดอกกุหลาบ')">
+                        <div class="gift-icon">🌹</div>
+                        <span>กุหลาบ</span>
+                        <small class="coin-cost">10 <i class="fas fa-coins"></i></small>
+                    </div>
+                    <div class="gift-item" onclick="sendGift('🍫', 50, 'ช็อกโกแลต')">
+                        <div class="gift-icon">🍫</div>
+                        <span>ช็อกโกแลต</span>
+                        <small class="coin-cost">50 <i class="fas fa-coins"></i></small>
+                    </div>
+                    <div class="gift-item" onclick="sendGift('🧸', 100, 'ตุ๊กตาหมี')">
+                        <div class="gift-icon">🧸</div>
+                        <span>ตุ๊กตาหมี</span>
+                        <small class="coin-cost">100 <i class="fas fa-coins"></i></small>
+                    </div>
+                    <div class="gift-item" onclick="sendGift('💎', 500, 'เพชร')">
+                        <div class="gift-icon">💎</div>
+                        <span>เพชร</span>
+                        <small class="coin-cost">500 <i class="fas fa-coins"></i></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <input type="file" id="story-file-input" accept="image/*" hidden onchange="handleStoryUpload(this)">
+
+        <div id="verify-modal" class="modal-overlay hidden" style="z-index: 5000;">
+            <div class="match-popup bounce-in" style="background: #111; color: white; border: 1px solid #333;">
+                <div class="scan-container">
+                    <div class="scan-line"></div>
+                    <img id="verify-preview-img" src="" class="verify-img">
+                    <i class="fas fa-expand-arrows-alt scan-corners"></i>
+                </div>
+                <h2 style="color:white; margin-top:20px;">Verification</h2>
+                <p style="color:#aaa;">ระบบกำลังสแกนใบหน้าของคุณ<br>เพื่อยืนยันตัวตน...</p>
+                <div id="verify-status" style="color: #3b82f6; font-weight: bold; min-height: 24px;">Scanning...</div>
+            </div>
+        </div>
+
+    </div> 
+
+    <div id="quest-modal" class="modal-overlay hidden" style="z-index: 4500;">
+        <div class="modal-content slide-up">
+            <div class="modal-header">
+                <h3>ภารกิจวันนี้</h3>
+                <button class="close-btn" onclick="document.getElementById('quest-modal').classList.add('hidden')"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="quest-list" class="quest-container">
+            </div>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
