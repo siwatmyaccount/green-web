@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Green web</title>
+    <title>Green Web | Secure Portal</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico"> 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -16,61 +16,97 @@
         </div>
         
         <ul class="nav-links">
-            <li><a href="#">Explore</a></li>
-            <li><a href="#">History</a></li>
-            <li><a href="#">Community</a></li>
-            <li><a href="#">Storage</a></li>
+            <li><a href="#" data-i18n="nav_explore">Explore</a></li>
+            <li><a href="#" data-i18n="nav_history">History</a></li>
+            <li><a href="#" data-i18n="nav_community">Community</a></li>
+            <li><a href="#" data-i18n="nav_storage">Storage</a></li>
         </ul>
 
         <div class="profile-section">
-            <span id="display-user">Guest</span>
-            <div class="avatar"><i class="fas fa-user-shield"></i></div>
+            <div class="custom-lang-dropdown" id="langDropdown">
+                <div class="selected-lang">
+                    <img src="https://flagcdn.com/w40/gb.png" alt="EN" class="lang-flag" id="current-flag">
+                    <span id="current-lang-code">EN</span>
+                    <i class="fas fa-chevron-down chevron-icon"></i>
+                </div>
+                <ul class="lang-list">
+                    <li data-lang="en"><img src="https://flagcdn.com/w40/gb.png" class="lang-flag"> <span>EN</span></li>
+                    <li data-lang="th"><img src="https://flagcdn.com/w40/th.png" class="lang-flag"> <span>TH</span></li>
+                    <li data-lang="zh"><img src="https://flagcdn.com/w40/cn.png" class="lang-flag"> <span>ZH</span></li>
+                    <li data-lang="ja"><img src="https://flagcdn.com/w40/jp.png" class="lang-flag"> <span>JA</span></li>
+                    <li data-lang="ko"><img src="https://flagcdn.com/w40/kr.png" class="lang-flag"> <span>KO</span></li>
+                    <li data-lang="ru"><img src="https://flagcdn.com/w40/ru.png" class="lang-flag"> <span>RU</span></li>
+                </ul>
+            </div>
+
+            <span id="display-user" data-i18n="guest">Guest</span>
+            <div class="avatar"><i class="fas fa-user-circle"></i></div>
         </div>
     </nav>
 
     <div class="main-wrapper">
         <div class="visual-side">
             <div class="text-content">
-                <h2>Security & Heritage</h2>
-                <p>Welcome to your personal encrypted vault.</p>
+                <h2 data-i18n="hero_title">Secure Access</h2>
+                <p data-i18n="hero_subtitle">Access your professional workspace and services.</p>
             </div>
         </div>
 
         <div class="auth-side">
             <div class="form-card">
                 <div id="login-box" class="form-content active">
-                    <h3>Secure Login</h3>
+                    <h3>Member Login</h3>
+                    <label class="field-label">Username / Email</label>
                     <div class="input-field">
-                        <i class="fas fa-at"></i>
-                        <input type="text" id="login-username" placeholder="Username" required>
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="login-username" placeholder="Username or Email" required>
                     </div>
+                    <label class="field-label">Password</label>
                     <div class="input-field">
                         <i class="fas fa-lock"></i>
-                        <input type="password" id="login-password" placeholder="Password" required>
+                        <input type="password" id="login-password" placeholder="Enter your password" required>
                     </div>
-                    <button class="main-btn" id="login-btn">Authenticate</button>
-                    <p class="toggle-text">New Operative? <span id="to-reg">Sign Up</span></p>
+                    <p class="toggle-text" style="text-align: right; margin-top: -10px; margin-bottom: 15px;">
+                        <span id="to-forgot" style="font-size: 0.8rem; opacity: 0.8;">Forgot Password? / ลืมรหัสผ่าน</span>
+                    </p>
+                    <button class="main-btn" id="login-btn">Login</button>
+                    <p class="toggle-text">Don't have an account? <span id="to-reg">Sign Up</span></p>
                 </div>
 
                 <div id="reg-box" class="form-content">
-                    <h3>Initialize Account</h3>
+                    <h3>Create Account</h3>
+                    <label class="field-label">Username</label>
                     <div class="input-field">
                         <i class="fas fa-user"></i>
-                        <input type="text" id="reg-username" placeholder="Choose Username" required>
+                        <input type="text" id="reg-username" placeholder="Choose a username" required>
                     </div>
+                    <label class="field-label">Email Address</label>
                     <div class="input-field">
                         <i class="fas fa-envelope"></i>
-                        <input type="email" id="reg-email" placeholder="Email Address" required>
+                        <input type="email" id="reg-email" placeholder="example@domain.com" required>
                     </div>
+                    <label class="field-label">Password</label>
                     <div class="input-field">
                         <i class="fas fa-key"></i>
-                        <input type="password" id="reg-password" placeholder="Passkey" required>
+                        <input type="password" id="reg-password" placeholder="Create a password" required>
                     </div>
-                    <div class="meter-container">
-                        <div id="strength-bar"></div>
+                    <div class="meter-container"><div id="strength-bar"></div></div>
+                    <button class="main-btn" id="register-btn">Register</button>
+                    <p class="toggle-text">Already have an account? <span id="to-login">Login</span></p>
+                </div>
+
+                <div id="forgot-box" class="form-content">
+                    <h3>Reset Password</h3>
+                    <label class="field-label">Username</label>
+                    <div class="input-field"><i class="fas fa-user"></i><input type="text" id="forgot-username" placeholder="Enter username"></div>
+                    <label class="field-label">Email Address</label>
+                    <div class="input-field"><i class="fas fa-envelope"></i><input type="email" id="forgot-email" placeholder="Enter email"></div>
+                    <div id="reset-section" style="display: none;">
+                        <label class="field-label">New Password</label>
+                        <div class="input-field"><i class="fas fa-lock"></i><input type="password" id="new-password" placeholder="New Password"></div>
                     </div>
-                    <button class="main-btn" id="register-btn">Create Identity</button>
-                    <p class="toggle-text">Registered? <span id="to-login">Login</span></p>
+                    <button class="main-btn" id="forgot-btn">Verify Account</button>
+                    <p class="toggle-text"><span id="forgot-to-login">Back to Login</span></p>
                 </div>
             </div>
         </div>
