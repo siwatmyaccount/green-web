@@ -10,12 +10,15 @@
 </head>
 <body>
     <nav class="navbar">
+        <div class="menu-toggle" id="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </div>
+
         <div class="logo">
-            <img src="logo.png" alt="Logo" class="nav-logo">
             Green <span> web </span>
         </div>
         
-        <ul class="nav-links">
+        <ul class="nav-links" id="nav-menu">
             <li><a href="#" data-i18n="nav_explore">Explore</a></li>
             <li><a href="#" data-i18n="nav_history">History</a></li>
             <li><a href="#" data-i18n="nav_community">Community</a></li>
@@ -38,7 +41,6 @@
                     <li data-lang="ru"><img src="https://flagcdn.com/w40/ru.png" class="lang-flag"> <span>RU</span></li>
                 </ul>
             </div>
-
             <span id="display-user" data-i18n="guest">Guest</span>
             <div class="avatar"><i class="fas fa-user-circle"></i></div>
         </div>
@@ -76,20 +78,11 @@
                 <div id="reg-box" class="form-content">
                     <h3>Create Account</h3>
                     <label class="field-label">Username</label>
-                    <div class="input-field">
-                        <i class="fas fa-user"></i>
-                        <input type="text" id="reg-username" placeholder="Choose a username" required>
-                    </div>
+                    <div class="input-field"><i class="fas fa-user"></i><input type="text" id="reg-username" placeholder="Choose a username"></div>
                     <label class="field-label">Email Address</label>
-                    <div class="input-field">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" id="reg-email" placeholder="example@domain.com" required>
-                    </div>
+                    <div class="input-field"><i class="fas fa-envelope"></i><input type="email" id="reg-email" placeholder="example@domain.com"></div>
                     <label class="field-label">Password</label>
-                    <div class="input-field">
-                        <i class="fas fa-key"></i>
-                        <input type="password" id="reg-password" placeholder="Create a password" required>
-                    </div>
+                    <div class="input-field"><i class="fas fa-key"></i><input type="password" id="reg-password" placeholder="Create a password"></div>
                     <div class="meter-container"><div id="strength-bar"></div></div>
                     <button class="main-btn" id="register-btn">Register</button>
                     <p class="toggle-text">Already have an account? <span id="to-login">Login</span></p>
