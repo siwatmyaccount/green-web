@@ -23,7 +23,6 @@ body { background: var(--bg-light); color: var(--text-main); min-height: 100vh; 
 
 .logo { display: flex; align-items: center; font-size: 1.4rem; font-weight: 500; color: var(--primary); }
 .logo span { color: var(--secondary); font-weight: bold; }
-.nav-logo { height: 35px; margin-right: 12px; }
 
 .nav-links { display: flex; list-style: none; gap: 30px; }
 .nav-links a { text-decoration: none; color: #000; font-size: 0.9rem; font-weight: 500; transition: 0.3s; }
@@ -31,7 +30,7 @@ body { background: var(--bg-light); color: var(--text-main); min-height: 100vh; 
 
 .profile-section { display: flex; align-items: center; gap: 15px; }
 
-/* --- Language Dropdown (Super Compact) --- */
+/* --- Language Dropdown --- */
 .custom-lang-dropdown { position: relative; cursor: pointer; user-select: none; }
 .selected-lang {
     display: flex; align-items: center; gap: 4px;
@@ -56,7 +55,20 @@ body { background: var(--bg-light); color: var(--text-main); min-height: 100vh; 
 }
 .lang-list li:hover { background: var(--accent); }
 
-/* --- Main Content --- */
+/* --- Password Toggle --- */
+.input-field .toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #999;
+    transition: 0.3s;
+    z-index: 10;
+}
+.input-field .toggle-password:hover { color: var(--secondary); }
+
+/* --- Form Fields --- */
 .main-wrapper { display: flex; min-height: 100vh; padding-top: 80px; }
 .visual-side {
     flex: 1.4; background: url('https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&q=80&w=2000') center/cover;
@@ -75,8 +87,15 @@ h3 { font-size: 1.8rem; margin-bottom: 25px; color: var(--primary); }
 .field-label { display: block; margin-bottom: 8px; font-size: 0.85rem; font-weight: 600; color: var(--primary); }
 .input-field { position: relative; margin-bottom: 20px; border: 1px solid #d1d5db; border-radius: 12px; transition: 0.3s; }
 .input-field:focus-within { border-color: var(--secondary); box-shadow: 0 0 0 4px rgba(64, 145, 108, 0.1); }
-.input-field i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--secondary); }
-input { width: 100%; padding: 14px 14px 14px 45px; border: none; outline: none; background: transparent; font-size: 0.95rem; }
+.input-field i:not(.toggle-password) { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--secondary); }
+
+input { width: 100%; padding: 14px 45px 14px 45px; border: none; outline: none; background: transparent; font-size: 0.95rem; }
+
+/* --- FIX: ซ่อนปุ่มลูกตาของ Browser (Edge/IE) --- */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
 
 .main-btn {
     width: 100%; padding: 15px; border: none; border-radius: 12px;
@@ -90,19 +109,16 @@ input { width: 100%; padding: 14px 14px 14px 45px; border: none; outline: none; 
 .meter-container { height: 4px; background: #eee; border-radius: 2px; margin-bottom: 20px; overflow: hidden; }
 #strength-bar { height: 100%; width: 0; transition: 0.5s; }
 
-/* --- Mobile Responsive (768px) --- */
+/* --- Mobile Responsive --- */
 @media (max-width: 768px) {
-    .menu-toggle { display: block; order: -1; } /* ย้ายขีดสามขีดมาซ้ายสุด */
-    
+    .menu-toggle { display: block; order: -1; }
     .nav-links {
         position: fixed; top: 80px; left: -100%; width: 250px; height: calc(100vh - 80px);
         background: rgba(255, 255, 255, 0.98); flex-direction: column; padding: 40px 20px;
         box-shadow: 10px 0 30px rgba(0,0,0,0.05); transition: 0.4s; z-index: 999;
     }
     .nav-links.active { left: 0; }
-    
     .main-wrapper { flex-direction: column; }
     .visual-side { flex: none; height: 200px; padding: 20px; align-items: center; justify-content: center; text-align: center; }
-    .visual-side h2 { font-size: 1.6rem; }
     .auth-side { padding: 40px 20px; }
 }
